@@ -13,12 +13,14 @@ class HTMLNode:
         raise NotImplementedError()
 
     def props_to_html(self):
-        if self.props and isinstance(self.props, dict):
-            return ''.join(f"{key}=\"{value}\" " for key, value in self.props.items()).strip()
-        else:
+        if self.props is None:
             return ""
+        props_html = ""
+        for prop in self.props:
+            props_html += f' {prop}="{self.props[prop]}"'
+        return props_html
         
-    def children_to_html(self, children=None):
+    def children_to_html(self, children = None):
         if children is None:
             children = self.children
         
