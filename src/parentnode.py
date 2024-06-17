@@ -14,8 +14,8 @@ class ParentNode(HTMLNode):
         if not self.children:
             raise ValueError("Children prop cannot be empty")
         if self.props:
-            attribs = self.props_to_html(self.props)
+            attribs = self.props_to_html()
         result = f"<{self.tag}{attribs}>"
-        result += self.children_to_html(self.children)
+        result += self.children_to_html()
         result += f"</{self.tag}>"
         return result
