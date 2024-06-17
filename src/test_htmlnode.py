@@ -1,8 +1,6 @@
 import unittest
 
 from htmlnode import HTMLNode
-#from textnode import TextNode
-#from utils.enums import TextType
 
 
 class TestHtmlNode(unittest.TestCase):
