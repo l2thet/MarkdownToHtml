@@ -31,6 +31,7 @@ class TextNode:
                 return LeafNode("img", "", {"src": text_node.url, "alt": text_node.text})
             case _:
                 raise ValueError(f"Invalid text type: {self.text_type}")
+    
     def __repr__(self) -> str:
-        return f"TextNode({self.text}, {self.text_type.value}, {self.url})"
+        return f"TextNode({self.text}, {self.text_type}, {self.url})"
     
