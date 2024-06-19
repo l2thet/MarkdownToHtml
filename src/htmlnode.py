@@ -1,7 +1,7 @@
 import logging
 import re
 
-from utils.enums import TextNodeType
+from src.utils.enums import TextNodeType
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -41,7 +41,7 @@ class HTMLNode:
     
     @staticmethod
     def split_nodes_delimiter(old_nodes, delimiter, text_type):
-        from textnode import TextNode  # Import inside the function to avoid circular reference
+        from src.textnode import TextNode  # Import inside the function to avoid circular reference
         
         new_nodes = []
         for old_node in old_nodes:

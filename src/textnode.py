@@ -1,5 +1,5 @@
-from leafnode import LeafNode
-from utils.enums import TextNodeType
+from src.leafnode import LeafNode
+from src.utils.enums import TextNodeType
 
 
 class TextNode:

@@ -1,9 +1,9 @@
 import logging
 import unittest
 
-from textnode import TextNode
-from utils.enums import TextNodeType
-from htmlnode import HTMLNode
+from src.textnode import TextNode
+from src.utils.enums import TextNodeType
+from src.htmlnode import HTMLNode
 
 
 class TestTextNode(unittest.TestCase):
@@ -93,7 +93,7 @@ class TestTextNode(unittest.TestCase):
         self.assertListEqual(
             [
                 TextNode("This is text with an ", TextNodeType.TEXT),
-                TextNode("italic", TextNodeType.ITALIC),W
+                TextNode("italic", TextNodeType.ITALIC),
                 TextNode(" word", TextNodeType.TEXT),
             ],
             new_nodes,
