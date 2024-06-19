@@ -80,5 +80,27 @@ class TestHtmlNode(unittest.TestCase):
             "<h2><b>Bold text</b>Normal text<i>italic text</i>Normal text</h2>",
         )
 
+    def test_extract_markdown_images(self):
+        #Arange
+        text = "This is text with an ![image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png) and ![another](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/dfsdkjfd.png)"
+        
+        #Act
+        result = HTMLNode.extract_markdown_images(text)
+        test = [("image", "https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png"), ("another", "https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/dfsdkjfd.png")]
+
+        #Assert
+        self.assertEqual(result, test)
+        
+    def test_extract_markdown_images(self):
+        #Arange
+        text = "This is text with a [link](https://www.example.com) and [another](https://www.example.com/another)"
+        
+        #Act
+        result = HTMLNode.extract_markdown_links(text)
+        test = [("link", "https://www.example.com"), ("another", "https://www.example.com/another")]
+
+        #Assert
+        self.assertEqual(result, test)   
+
 if __name__ == "__main__":
     unittest.main()

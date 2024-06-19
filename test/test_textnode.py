@@ -93,7 +93,7 @@ class TestTextNode(unittest.TestCase):
         self.assertListEqual(
             [
                 TextNode("This is text with an ", TextNodeType.TEXT),
-                TextNode("italic", TextNodeType.ITALIC),
+                TextNode("italic", TextNodeType.ITALIC),W
                 TextNode(" word", TextNodeType.TEXT),
             ],
             new_nodes,

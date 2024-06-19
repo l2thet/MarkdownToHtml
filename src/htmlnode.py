@@ -1,4 +1,5 @@
 import logging
+import re
 
 from utils.enums import TextNodeType
 
@@ -37,42 +38,6 @@ class HTMLNode:
         result = current_child.to_html() + self.children_to_html(rest_of_children)
         
         return result
-
-    # @staticmethod
-    # def split_nodes_delimiter(old_nodes, delimiter, text_node_type):
-    #     from textnode import TextNode  # Import inside the function to avoid circular reference
-
-    #     results = []
-    #     for node in old_nodes:
-    #         if isinstance(node, TextNode) and node.text_type == TextNodeType.CODE:
-    #             parts = node.text.split(delimiter)
-    #             for index, part in enumerate(parts):
-    #                 if part:
-    #                     if index % 2 == 0:
-    #                         results.append(TextNode(part, TextNodeType.TEXT))
-    #                     else:
-    #                         results.append(TextNode(part, TextNodeType.CODE))
-    #         elif isinstance(node, TextNode) and node.text_type == TextNodeType.BOLD:
-    #             parts = node.text.split(delimiter)
-    #             logging.debug(f"Parts: {parts}")
-    #             for index, part in enumerate(parts):
-    #                 if part:
-    #                     if index % 2 == 0:
-    #                         results.append(TextNode(part, TextNodeType.TEXT))
-    #                     else:
-    #                         results.append(TextNode(part, TextNodeType.BOLD))
-    #         elif isinstance(node, TextNode) and node.text_type == TextNodeType.ITALIC:
-    #             parts = node.text.split(delimiter)
-    #             for index, part in enumerate(parts):
-    #                 if part:
-    #                     if index % 2 == 0:
-    #                         results.append(TextNode(part, TextNodeType.TEXT))
-    #                     else:
-    #                         results.append(TextNode(part, TextNodeType.ITALIC))
-    #         else:
-    #             results.append(node)
-
-    #     return results
     
     @staticmethod
     def split_nodes_delimiter(old_nodes, delimiter, text_type):
@@ -98,6 +63,14 @@ class HTMLNode:
                     split_nodes.append(TextNode(sections[i], text_type))
             new_nodes.extend(split_nodes)
         return new_nodes
+    
+    def extract_markdown_images(text: str):
+        matches = re.findall(r"!\[(.*?)\]\((.*?)\)", text)
+        return matches
+    
+    def extract_markdown_links(text: str):
+        matches = re.findall(r"\[(.*?)\]\((.*?)\)", text)
+        return matches
     
     def __repr__(self):
         return f"HTMLNode(tag={self.tag}, value={self.value}, children={self.children}, props={self.props})"
