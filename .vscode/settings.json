@@ -8,6 +8,5 @@
     ],
     "python.testing.unittestEnabled": true,
     "python.testing.promptToConfigure": true,
-    "python.testing.pytestEnabled": false,
-    "python.testing.autoTestDiscoverOnSaveEnabled": true  // Enable auto-discover on save
+    "python.testing.pytestEnabled": false
 }

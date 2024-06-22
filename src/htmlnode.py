@@ -64,6 +64,16 @@ class HTMLNode:
             new_nodes.extend(split_nodes)
         return new_nodes
     
+    @staticmethod
+    def split_nodes_image(old_nodes):
+        extracted_info = HTMLNode.extract_markdown_images(repr(old_nodes))
+        return extracted_info
+    
+    @staticmethod
+    def split_nodes_link(old_nodes):
+        return None
+    
+    @staticmethod
     def extract_markdown_images(text: str):
         matches = re.findall(r"!\[(.*?)\]\((.*?)\)", text)
         return matches

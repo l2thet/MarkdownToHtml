@@ -1,9 +1,13 @@
+import logging
 import unittest
 
 from src.htmlnode import HTMLNode
 from src.leafnode import LeafNode
 from src.parentnode import ParentNode
+from src.textnode import TextNode
+from src.utils.enums import TextNodeType
 
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class TestHtmlNode(unittest.TestCase):
     def test_props_to_html(self):
@@ -100,7 +104,32 @@ class TestHtmlNode(unittest.TestCase):
         test = [("link", "https://www.example.com"), ("another", "https://www.example.com/another")]
 
         #Assert
-        self.assertEqual(result, test)   
-
+        self.assertEqual(result, test)
+        
+    def test_split_nodes_image_returns_expected_result(self):
+        # Arrange
+        old_nodes = TextNode(
+            "This is text with an ![image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png) and another ![second image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/3elNhQu.png)",
+            TextNodeType.TEXT,
+        )
+        
+        expected_result = [
+                            TextNode("This is text with an ", TextNodeType.TEXT),
+                            TextNode("image", TextNodeType.IMAGE, "https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png"),
+                            TextNode(" and another ", TextNodeType.TEXT),
+                            TextNode(
+                                "second image", TextNodeType.IMAGE, "https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/3elNhQu.png"
+                            ),
+                        ]
+        
+        logging.debug(f"old_nodes: {repr(old_nodes)}")
+        
+        
+        # Act
+        result = HTMLNode.split_nodes_image([old_nodes])
+        
+        # Assert
+        self.assertEqual(result, expected_result)
+        
 if __name__ == "__main__":
     unittest.main()
