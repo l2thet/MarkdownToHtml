@@ -95,7 +95,7 @@ class TestHtmlNode(unittest.TestCase):
         #Assert
         self.assertEqual(result, test)
         
-    def test_extract_markdown_images(self):
+    def test_extract_markdown_links(self):
         #Arange
         text = "This is text with a [link](https://www.example.com) and [another](https://www.example.com/another)"
         
@@ -122,14 +122,98 @@ class TestHtmlNode(unittest.TestCase):
                             ),
                         ]
         
-        logging.debug(f"old_nodes: {repr(old_nodes)}")
-        
-        
         # Act
         result = HTMLNode.split_nodes_image([old_nodes])
+        logging.debug(f"result: {result}")
         
         # Assert
         self.assertEqual(result, expected_result)
+        
+    def test_split_nodes_links_returns_expected_result(self):
+        # Arrange
+        old_nodes = TextNode(
+            "This is text with an ![image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png) and another ![second image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/3elNhQu.png)",
+            TextNodeType.TEXT,
+        )
+        
+        expected_result = [
+                            TextNode("This is text with an ", TextNodeType.TEXT),
+                            TextNode("image", TextNodeType.IMAGE, "https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png"),
+                            TextNode(" and another ", TextNodeType.TEXT),
+                            TextNode(
+                                "second image", TextNodeType.IMAGE, "https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/3elNhQu.png"
+                            ),
+                        ]
+        
+        # Act
+        result = HTMLNode.split_nodes_image([old_nodes])
+        logging.debug(f"result: {result}")
+        
+        # Assert
+        self.assertEqual(result, expected_result)
+        
+    def test_split_image(self):
+        node = TextNode(
+            "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png)",
+            TextNodeType.TEXT,
+        )
+        new_nodes = HTMLNode.split_nodes_image([node])
+        self.assertListEqual(
+            [
+                TextNode("This is text with an ", TextNodeType.TEXT),
+                TextNode("image", TextNodeType.IMAGE, "https://i.imgur.com/zjjcJKZ.png"),
+            ],
+            new_nodes,
+        )
+
+    def test_split_image_single(self):
+        node = TextNode(
+            "![image](https://www.example.com/image.png)",
+            TextNodeType.TEXT,
+        )
+        new_nodes = HTMLNode.split_nodes_image([node])
+        self.assertListEqual(
+            [
+                TextNode("image", TextNodeType.IMAGE, "https://www.example.com/image.png"),
+            ],
+            new_nodes,
+        )
+
+    def test_split_images(self):
+        node = TextNode(
+            "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png)",
+            TextNodeType.TEXT,
+        )
+        new_nodes = HTMLNode.split_nodes_image([node])
+        self.assertListEqual(
+            [
+                TextNode("This is text with an ", TextNodeType.TEXT),
+                TextNode("image", TextNodeType.IMAGE, "https://i.imgur.com/zjjcJKZ.png"),
+                TextNode(" and another ", TextNodeType.TEXT),
+                TextNode(
+                    "second image", TextNodeType.IMAGE, "https://i.imgur.com/3elNhQu.png"
+                ),
+            ],
+            new_nodes,
+        )
+
+    def test_split_links(self):
+        node = TextNode(
+            "This is text with a [link](https://boot.dev) and [another link](https://blog.boot.dev) with text that follows",
+            TextNodeType.TEXT,
+        )
+        new_nodes = HTMLNode.split_nodes_link([node])
+        self.assertListEqual(
+            [
+                TextNode("This is text with a ", TextNodeType.TEXT),
+                TextNode("link", TextNodeType.LINK, "https://boot.dev"),
+                TextNode(" and ", TextNodeType.TEXT),
+                TextNode("another link", TextNodeType.LINK, "https://blog.boot.dev"),
+                TextNode(" with text that follows", TextNodeType.TEXT),
+            ],
+            new_nodes,
+        )
+    
         
 if __name__ == "__main__":
     unittest.main()

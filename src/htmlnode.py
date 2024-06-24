@@ -66,12 +66,49 @@ class HTMLNode:
     
     @staticmethod
     def split_nodes_image(old_nodes):
-        extracted_info = HTMLNode.extract_markdown_images(repr(old_nodes))
-        return extracted_info
+        from src.textnode import TextNode  # Import inside the function to avoid circular reference
+        
+        new_nodes = []
+        
+        for node in old_nodes:
+            if node.text_type != TextNodeType.TEXT:
+                new_nodes.append(node)
+                continue
+            matches = re.finditer(r"!\[(.*?)\]\((.*?)\)", node.text)
+            last_end = 0
+            for match in matches:
+                start, end = match.span()
+                if start > last_end:
+                    new_nodes.append(TextNode(node.text[last_end:start], TextNodeType.TEXT))
+                new_nodes.append(TextNode(match.group(1), TextNodeType.IMAGE, match.group(2)))
+                last_end = end
+            if last_end < len(node.text):
+                new_nodes.append(TextNode(node.text[last_end:], TextNodeType.TEXT))
+        
+        return new_nodes
     
     @staticmethod
     def split_nodes_link(old_nodes):
-        return None
+        from src.textnode import TextNode  # Import inside the function to avoid circular reference
+        
+        new_nodes = []
+        
+        for node in old_nodes:
+            if node.text_type != TextNodeType.TEXT:
+                new_nodes.append(node)
+                continue
+            matches = re.finditer(r"\[(.*?)\]\((.*?)\)", node.text)
+            last_end = 0
+            for match in matches:
+                start, end = match.span()
+                if start > last_end:
+                    new_nodes.append(TextNode(node.text[last_end:start], TextNodeType.TEXT))
+                new_nodes.append(TextNode(match.group(1), TextNodeType.LINK, match.group(2)))
+                last_end = end
+            if last_end < len(node.text):
+                new_nodes.append(TextNode(node.text[last_end:], TextNodeType.TEXT))
+        
+        return new_nodes
     
     @staticmethod
     def extract_markdown_images(text: str):
