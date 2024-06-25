@@ -111,10 +111,52 @@ class HTMLNode:
         return new_nodes
     
     @staticmethod
+    def text_to_textnodes(text):
+        from src.textnode import TextNode  # Import inside the function to avoid circular reference
+    
+        # Step 1: Initialize the text as a single TextNode
+        nodes = [TextNode(text, TextNodeType.TEXT)]
+        
+        # Step 2: Apply the image splitting function
+        nodes = HTMLNode.split_nodes_image(nodes)
+        
+        # Step 3: Apply the link splitting function
+        nodes = HTMLNode.split_nodes_link(nodes)
+        
+        # Step 4: Apply the delimiter splitting functions for bold, italic, and code
+        nodes = HTMLNode.split_nodes_delimiter(nodes, "**", TextNodeType.BOLD)
+        nodes = HTMLNode.split_nodes_delimiter(nodes, "*", TextNodeType.ITALIC)
+        nodes = HTMLNode.split_nodes_delimiter(nodes, "`", TextNodeType.CODE)
+        
+        return nodes
+    
+    @staticmethod
+    def markdown_to_blocks(markdown):
+        lines = markdown.split("\n")
+        results = []
+        current_block = []
+        
+        for line in lines:
+            stripped_line = line.strip()
+            if stripped_line:
+                current_block.append(stripped_line)
+            else:
+                if current_block:
+                    results.append("\n".join(current_block))
+                    current_block = []
+        
+        if current_block:
+            results.append("\n".join(current_block))
+
+        return results
+
+    
+    @staticmethod
     def extract_markdown_images(text: str):
         matches = re.findall(r"!\[(.*?)\]\((.*?)\)", text)
         return matches
     
+    @staticmethod
     def extract_markdown_links(text: str):
         matches = re.findall(r"\[(.*?)\]\((.*?)\)", text)
         return matches

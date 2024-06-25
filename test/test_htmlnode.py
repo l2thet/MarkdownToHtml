@@ -213,7 +213,87 @@ class TestHtmlNode(unittest.TestCase):
             ],
             new_nodes,
         )
-    
         
+    def test_text_to_textnodes(self):
+        text = "This is **text** with an *italic* word and a `code block` and an ![image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png) and a [link](https://boot.dev)"
+        text_nodes = HTMLNode.text_to_textnodes(text)
+        
+        compare = [
+            TextNode("This is ", TextNodeType.TEXT),
+            TextNode("text", TextNodeType.BOLD),
+            TextNode(" with an ", TextNodeType.TEXT),
+            TextNode("italic", TextNodeType.ITALIC),
+            TextNode(" word and a ", TextNodeType.TEXT),
+            TextNode("code block", TextNodeType.CODE),
+            TextNode(" and an ", TextNodeType.TEXT),
+            TextNode("image", TextNodeType.IMAGE, "https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png"),
+            TextNode(" and a ", TextNodeType.TEXT),
+            TextNode("link", TextNodeType.LINK, "https://boot.dev"),
+        ]
+        
+        self.assertListEqual(text_nodes, compare)
+        
+    def test_markdown_to_blocks(self):
+        markdown_string = """This is **bolded** paragraph
+
+            This is another paragraph with *italic* text and `code` here
+            This is the same paragraph on a new line
+
+            * This is a list
+            * with items
+            """
+        result = HTMLNode.markdown_to_blocks(markdown_string)
+        
+        compare = [
+                    "This is **bolded** paragraph",
+                    "This is another paragraph with *italic* text and `code` here\nThis is the same paragraph on a new line",
+                    "* This is a list\n* with items"
+                ]
+        
+        self.assertListEqual(result, compare)
+        
+    def test_markdown_to_blocks(self):
+        md = """
+        This is **bolded** paragraph
+
+        This is another paragraph with *italic* text and `code` here
+        This is the same paragraph on a new line
+
+        * This is a list
+        * with items
+        """
+        blocks = HTMLNode.markdown_to_blocks(md)
+        self.assertEqual(
+            blocks,
+            [
+                "This is **bolded** paragraph",
+                "This is another paragraph with *italic* text and `code` here\nThis is the same paragraph on a new line",
+                "* This is a list\n* with items",
+            ],
+        )
+
+    def test_markdown_to_blocks_newlines(self):
+        md = """
+        This is **bolded** paragraph
+
+
+
+
+        This is another paragraph with *italic* text and `code` here
+        This is the same paragraph on a new line
+
+        * This is a list
+        * with items
+        """
+        blocks = HTMLNode.markdown_to_blocks(md)
+        self.assertEqual(
+            blocks,
+            [
+                "This is **bolded** paragraph",
+                "This is another paragraph with *italic* text and `code` here\nThis is the same paragraph on a new line",
+                "* This is a list\n* with items",
+            ],
+        )
+            
 if __name__ == "__main__":
     unittest.main()
