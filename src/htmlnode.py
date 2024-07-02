@@ -1,7 +1,7 @@
 import logging
 import re
 
-from src.utils.enums import TextNodeType
+from src.utils.enums import TextNodeType, MarkdownBlockTypes
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -39,6 +39,14 @@ class HTMLNode:
         
         return result
     
+    def __eq__(self, other):
+        if not isinstance(other, HTMLNode):
+            return False
+        return (self.tag == other.tag and
+                self.value == other.value and
+                self.children == other.children and
+                self.props == other.props)
+        
     @staticmethod
     def split_nodes_delimiter(old_nodes, delimiter, text_type):
         from src.textnode import TextNode  # Import inside the function to avoid circular reference
@@ -150,6 +158,36 @@ class HTMLNode:
 
         return results
 
+    @staticmethod
+    def block_to_html_node(block):
+        from src.utils.htmlhelpers import HTMLHelpers  # Import inside the function to avoid circular reference
+        
+        block_type = HTMLHelpers.block_to_block_type(block)
+        if block_type == MarkdownBlockTypes.PARAGRAPH:
+            return HTMLHelpers.block_paragraph_to_html_node(block)
+        if block_type == MarkdownBlockTypes.HEADING:
+            return HTMLHelpers.block_heading_to_html_node(block)
+        if block_type == MarkdownBlockTypes.CODE:
+            return HTMLHelpers.block_code_to_html_node(block)
+        if block_type == MarkdownBlockTypes.ORDERED_LIST:
+            return HTMLHelpers.block_ordered_list_to_html_node(block)
+        if block_type == MarkdownBlockTypes.UNORDERED_LIST:
+            return HTMLHelpers.block_unordered_list_to_html_node(block)
+        if block_type == MarkdownBlockTypes.QUOTE:
+            return HTMLHelpers.block_quote_to_html_node(block)
+        raise ValueError("Invalid block type")
+    
+    @staticmethod
+    def markdown_to_html_nodes(markdown):
+        from src.htmlnode import HTMLNode
+        from src.parentnode import ParentNode
+        
+        blocks = HTMLNode.markdown_to_blocks(markdown)
+        children = []
+        for block in blocks:
+            html_node = HTMLNode.block_to_html_node(block)
+            children.append(html_node)
+        return ParentNode("div", children, None)
     
     @staticmethod
     def extract_markdown_images(text: str):
