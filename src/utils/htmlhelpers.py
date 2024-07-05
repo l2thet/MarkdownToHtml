@@ -1,5 +1,5 @@
 from src.parentnode import ParentNode
-from utils.enums import MarkdownBlockTypes
+from src.utils.enums import MarkdownBlockTypes
 
 
 class HTMLHelpers:
