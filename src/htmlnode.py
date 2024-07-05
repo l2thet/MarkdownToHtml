@@ -1,7 +1,7 @@
 import logging
 import re
 
-from src.utils.enums import TextNodeType, MarkdownBlockTypes
+from utils.enums import TextNodeType, MarkdownBlockTypes
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
