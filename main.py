@@ -1,15 +1,27 @@
 import os
 import shutil
 
+from src.gencontent import generate_page
 from src.textnode import TextNode
 from src.utils.enums import TextNodeType
+
+dir_path_static = "./static"
+dir_path_public = "./public"
+dir_path_content = "./content"
+template_path = "./template.html"
 
 def main():        
     result = TextNode("This is a text node", TextNodeType.BOLD, "https://www.boot.dev")
     print(result)
-    if os.path.exists("../public"):
-        shutil.rmtree("../public", ignore_errors=True)
-    cp_folder_recursive("../static", "../public")
+    if os.path.exists(dir_path_public):
+        shutil.rmtree(dir_path_public, ignore_errors=True)
+    cp_folder_recursive(dir_path_static, dir_path_public)
+    
+    generate_page(
+        os.path.join(dir_path_content, "index.md"),
+        template_path,
+        os.path.join(dir_path_public, "index.html"),
+    )
 
 
 def cp_folder_recursive(folder_source, folder_dest):
