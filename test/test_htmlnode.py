@@ -2,6 +2,7 @@ import logging
 import unittest
 
 from src.htmlnode import HTMLNode
+from src.inline_markdown import extract_markdown_images, extract_markdown_links, split_nodes_image, split_nodes_link, text_to_textnodes
 from src.leafnode import LeafNode
 from src.parentnode import ParentNode
 from src.textnode import TextNode
@@ -90,7 +91,7 @@ class TestHtmlNode(unittest.TestCase):
         text = "This is text with an ![image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png) and ![another](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/dfsdkjfd.png)"
         
         #Act
-        result = HTMLNode.extract_markdown_images(text)
+        result = extract_markdown_images(text)
         test = [("image", "https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png"), ("another", "https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/dfsdkjfd.png")]
 
         #Assert
@@ -101,7 +102,7 @@ class TestHtmlNode(unittest.TestCase):
         text = "This is text with a [link](https://www.example.com) and [another](https://www.example.com/another)"
         
         #Act
-        result = HTMLNode.extract_markdown_links(text)
+        result = extract_markdown_links(text)
         test = [("link", "https://www.example.com"), ("another", "https://www.example.com/another")]
 
         #Assert
@@ -124,7 +125,7 @@ class TestHtmlNode(unittest.TestCase):
                         ]
         
         # Act
-        result = HTMLNode.split_nodes_image([old_nodes])
+        result = split_nodes_image([old_nodes])
         logging.debug(f"result: {result}")
         
         # Assert
@@ -147,7 +148,7 @@ class TestHtmlNode(unittest.TestCase):
                         ]
         
         # Act
-        result = HTMLNode.split_nodes_image([old_nodes])
+        result = split_nodes_image([old_nodes])
         logging.debug(f"result: {result}")
         
         # Assert
@@ -158,7 +159,7 @@ class TestHtmlNode(unittest.TestCase):
             "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png)",
             TextNodeType.TEXT,
         )
-        new_nodes = HTMLNode.split_nodes_image([node])
+        new_nodes = split_nodes_image([node])
         self.assertListEqual(
             [
                 TextNode("This is text with an ", TextNodeType.TEXT),
@@ -172,7 +173,7 @@ class TestHtmlNode(unittest.TestCase):
             "![image](https://www.example.com/image.png)",
             TextNodeType.TEXT,
         )
-        new_nodes = HTMLNode.split_nodes_image([node])
+        new_nodes = split_nodes_image([node])
         self.assertListEqual(
             [
                 TextNode("image", TextNodeType.IMAGE, "https://www.example.com/image.png"),
@@ -185,7 +186,7 @@ class TestHtmlNode(unittest.TestCase):
             "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png)",
             TextNodeType.TEXT,
         )
-        new_nodes = HTMLNode.split_nodes_image([node])
+        new_nodes = split_nodes_image([node])
         self.assertListEqual(
             [
                 TextNode("This is text with an ", TextNodeType.TEXT),
@@ -203,7 +204,7 @@ class TestHtmlNode(unittest.TestCase):
             "This is text with a [link](https://boot.dev) and [another link](https://blog.boot.dev) with text that follows",
             TextNodeType.TEXT,
         )
-        new_nodes = HTMLNode.split_nodes_link([node])
+        new_nodes = split_nodes_link([node])
         self.assertListEqual(
             [
                 TextNode("This is text with a ", TextNodeType.TEXT),
@@ -217,7 +218,7 @@ class TestHtmlNode(unittest.TestCase):
         
     def test_text_to_textnodes(self):
         text = "This is **text** with an *italic* word and a `code block` and an ![image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png) and a [link](https://boot.dev)"
-        text_nodes = HTMLNode.text_to_textnodes(text)
+        text_nodes = text_to_textnodes(text)
         
         compare = [
             TextNode("This is ", TextNodeType.TEXT),

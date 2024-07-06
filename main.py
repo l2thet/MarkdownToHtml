@@ -1,8 +1,8 @@
 import os
 import shutil
 
-from textnode import TextNode
-from utils.enums import TextNodeType
+from src.textnode import TextNode
+from src.utils.enums import TextNodeType
 
 def main():        
     result = TextNode("This is a text node", TextNodeType.BOLD, "https://www.boot.dev")
